@@ -53,12 +53,10 @@ elif (status == 'Check the Specific Creator from database'):
                    b = row;
                    b1 = pd.Series(row)
                    df2 = b1.to_frame()
-
-                   # concatenate dataframes
-                   frames = [fd, df1, df2]
-                   d = pd.concat(frames, axis=1)
-                   print(d)
-                   d.to_csv('Given_User.csv', index=['Index', 'User1', 'User2'], header=False)
+           frames = [fd, df1, df2]
+           d = pd.concat(frames, axis=1)
+           print(d)
+           d.to_csv('Given_User.csv', index=None)
 
            if 'FALSE' in df1.values or 'FALSE' in df2.values:
                st.error('Not Having similarity - Either one or both are not an Business Account\n')
@@ -66,7 +64,7 @@ elif (status == 'Check the Specific Creator from database'):
                st.write('Both users data to compare', data)
            else:
                st.success('Having similarity between users - Both are business account\n ')
-               data = pd.read_csv("Given_User.csv")  # path folder of the data file
+               data = pd.read_csv("Given_User.csv",skiprows=[0])  # path folder of the data file
                st.write('Both users data to compare', data)
 elif(status == 'Check the Creator outer from the database and check business category'):
     bot = instaloader.Instaloader()
@@ -111,16 +109,12 @@ elif(status == 'Check the Creator outer from the database and check business cat
                 b.append(row)
         data = pd.read_csv("newuser.csv")  # path folder of the data file
         st.write(data)
-        st.write('Number of accounts in similar with DB accounts', similar)
-        st.write('Number of Business in similar with DB accounts', business)
+        st.write('Number of similar business  ', similar)
+        #st.write('Number of business account', business)
         data_Similar = pd.DataFrame(a)
         data_Similar.to_csv('Similar_Account.csv', index=None)
         data = pd.read_csv("Similar_Account.csv")  # path folder of the data file
         st.success('Creators with same Account')
         st.write(data)
-        data_Business = pd.DataFrame(b)
-        data_Business.to_csv('Similar_Business.csv',index=None)
-        data = pd.read_csv("Similar_Business.csv")  # path folder of the data file
-        st.success('Creators with same Business')
-        st.write(data)
+
 
