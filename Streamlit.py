@@ -3,7 +3,6 @@ import streamlit as st
 from PIL import Image
 import pandas as pd
 import csv
-from sqlalchemy import create_engine
 import instaloader
 img = Image.open("logo.png")
 st.image(img, width=300)
@@ -14,22 +13,20 @@ st.title('Instagram Content Creator\n',image)
 st.write("\nExplore the data of Content Creator!")
 # function for getting more than 5K+ followers
 
-csv_reading = csv.reader(
-    open('C:/Users/sivasankari/Downloads/Snipfeed/read/data/final scrap.csv', 'r', encoding="cp437"))
-for row in csv_reading:
-    engine = create_engine('sqlite://', echo=False)
-    d = pd.read_csv('C:/Users/sivasankari/Downloads/Snipfeed/read/data/final scrap.csv', encoding="cp437")
-    d.to_sql('Pred_Data', con=engine)
-    result= engine.execute("SELECT COUNT (profileUrl)FROM Pred_Data where followersCount <= 5000").fetchall()
-    b = ''.join(str(result).split(','))
-    break
-
+dataFrame_creator= pd.read_csv('final Scrap.csv')
+co = dataFrame_creator['followersCount']
+dataFrame_creator['followersCount'] = dataFrame_creator['followersCount'].fillna(0)
+result=dataFrame_creator[dataFrame_creator['followersCount'] >= 5000]['followersCount'].count()
+p=dataFrame_creator[dataFrame_creator['followersCount']>5000]
+p.to_csv('Creator_morethan5K.csv')
 
 status = st.radio("Select Option: ", ('Check the Number of followers more than 5K followers',
                                       'Check the Specific Creator from database',
                                       'Check the Creator outer from the database and check business category'))
 if (status == 'Check the Number of followers more than 5K followers'):
-    st.success(b[2:5])
+    st.success(result)
+    st.write(p)
+    st.success('The creators saved in a csv file name of -Creator_morethan5K.csv')
 elif (status == 'Check the Specific Creator from database'):
    btn=st.button('Enter to retrieve the whole data')
    if btn:
