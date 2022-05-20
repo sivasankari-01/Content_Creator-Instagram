@@ -25,50 +25,49 @@ status = st.radio("Select Option: ", ('Check the Number of followers more than 5
                                       'Check the Creator outer from the database and check business category'))
 if (status == 'Check the Number of followers more than 5K followers'):
     st.success(result)
-    st.write(p)
-    st.success('The creators saved in a csv file name of -Creator_morethan5K.csv')
+    st.info('The creators saved in a csv file - Creator_morethan5K.csv')
+    st.write('Total number of creators more than 5K followers are:',p)
+
 elif (status == 'Check the Specific Creator from database'):
-   btn=st.button('Enter to retrieve the whole data')
-   if btn:
-       global df, df1, df2
-       #url1 = input("Enter the Username1:\n")
-       #url2 = input("Enter the Username1:\n")
-       #fit_with_ishmeet
-       url1 = 'fit_with_ishmeet'
-       url2 = 'mamissfitness'
-       csv_reading = csv.reader(
-           open('C:/Users/sivasankari/Downloads/Snipfeed/read/data/final scrap.csv', 'r', encoding="cp437"))
-       data = pd.read_csv("final scrap.csv")  # path folder of the data file
-       st.write(data)
-       for row in csv_reading:
-           if url1 == row[3]:
-               a = row;
-               index = ['profileUrl', 'mailFound', 'contactPhoneNumber', 'profileName', 'fullName', 'bio',
-                        'followersCount', 'followingCount', 'instagramID', 'isBusinessAccount',
-                        'isVerified', 'businessCategory', 'postsCount']
-               ind = pd.Series(index)
-               fd = ind.to_frame()
-               a1 = pd.Series(row)
-               df1 = a1.to_frame()
-           if url2 == row[3]:
-               b = row;
-               b1 = pd.Series(row)
-               df2 = b1.to_frame()
+       global fd, df1, df2, d
+       df = pd.read_csv('final scrap.csv')
+       d = df['profileName']
+       url1 = st.sidebar.selectbox('Firstname', d)
+       url2 = st.sidebar.selectbox('Second name', d)
+       if (st.sidebar.button('Click to see similarity')):
 
-       # concatenate dataframes
-       frames = [fd, df1, df2]
-       d = pd.concat(frames, axis=1)
-       print(d)
-       d.to_csv('Given_User.csv', index=['Index', 'User1', 'User2'], header=False)
+           csv_reading = csv.reader(
+               open('C:/Users/sivasankari/Downloads/Snipfeed/read/data/final scrap.csv', 'r', encoding="cp437"))
 
-       if 'FALSE' in df1.values or 'FALSE' in df2.values:
-           st.error('Not Having similarity - Either one or both are not an Business Account\n')
-           data = pd.read_csv("Given_User.csv")  # path folder of the data file
-           st.write('Both users data to compare',data)
-       else:
-           st.success('Having similarity between users - Both are business account\n ')
-           data = pd.read_csv("Given_User.csv")  # path folder of the data file
-           st.write('Both users data to compare',data)
+           for row in csv_reading:
+               if url1 == row[3]:
+                   a = row;
+                   index = ['profileUrl', 'mailFound', 'contactPhoneNumber', 'profileName', 'fullName', 'bio',
+                            'followersCount', 'followingCount', 'instagramID', 'isBusinessAccount',
+                            'isVerified', 'businessCategory', 'postsCount']
+                   ind = pd.Series(index)
+                   fd = ind.to_frame()
+                   a1 = pd.Series(row)
+                   df1 = a1.to_frame()
+               if url2 == row[3]:
+                   b = row;
+                   b1 = pd.Series(row)
+                   df2 = b1.to_frame()
+
+                   # concatenate dataframes
+                   frames = [fd, df1, df2]
+                   d = pd.concat(frames, axis=1)
+                   print(d)
+                   d.to_csv('Given_User.csv', index=['Index', 'User1', 'User2'], header=False)
+
+           if 'FALSE' in df1.values or 'FALSE' in df2.values:
+               st.error('Not Having similarity - Either one or both are not an Business Account\n')
+               data = pd.read_csv("Given_User.csv")  # path folder of the data file
+               st.write('Both users data to compare', data)
+           else:
+               st.success('Having similarity between users - Both are business account\n ')
+               data = pd.read_csv("Given_User.csv")  # path folder of the data file
+               st.write('Both users data to compare', data)
 elif(status == 'Check the Creator outer from the database and check business category'):
     bot = instaloader.Instaloader()
     #Username = input('Enter the Account Username: \n')
@@ -94,7 +93,7 @@ elif(status == 'Check the Creator outer from the database and check business cat
             profile.biography, profile.external_url, profile.is_business_account, profile.business_category_name]
         fd1 = pd.DataFrame(data, index=['Username', 'User ID', 'Number of Posts', 'Followers', 'Followees', 'Bio', 'Url',
                                    'Business Account', 'Catagory of business'])
-        fd1.to_csv('newuser.csv')
+        fd1.to_csv('newuser.csv', header=['Results'])
         similarity1 = profile.followers
         similarity2 = profile.is_business_account
         similarity3 = profile.business_category_name
@@ -117,8 +116,11 @@ elif(status == 'Check the Creator outer from the database and check business cat
         data_Similar = pd.DataFrame(a)
         data_Similar.to_csv('Similar_Account.csv', index=None)
         data = pd.read_csv("Similar_Account.csv")  # path folder of the data file
+        st.success('Creators with same Account')
         st.write(data)
         data_Business = pd.DataFrame(b)
-        data_Business.to_csv('Similar_Business.csv', index=None)
+        data_Business.to_csv('Similar_Business.csv',index=None)
         data = pd.read_csv("Similar_Business.csv")  # path folder of the data file
+        st.success('Creators with same Business')
         st.write(data)
+
